@@ -8,6 +8,7 @@ from PIL import Image
 
 
 
+metadata_Erase = False
 
 
 root = tk.Tk()
@@ -17,23 +18,32 @@ root.geometry('300x150')
 
 
 def select_files():
+    metadata_Erase=True
     filetypes = (
         ('text files', '*.txt'),
         ('All files', '*.*')
+
     )
 
-    filenames = fd.askopenfilenames(
+    filenames = fd.askopenfilename(
         title='Open files',
         initialdir='/',
         filetypes=filetypes)
+
 
 
     showinfo(
         title='Metadata deleted for the following file:',
         message=filenames
 
+
     )
 
+    if metadata_Erase == True:
+        im = Image.open(filenames)
+        # this clears all exif data
+        im.getexif().clear()
+        im.save(filenames)
 
 
 # open button
@@ -43,7 +53,10 @@ open_button = ttk.Button(
     command=select_files
 
 
+
+
 )
+
 
 
 
@@ -51,10 +64,5 @@ open_button = ttk.Button(
 open_button.pack(expand=True)
 
 root.mainloop()
-# next 3 lines strip exif
-m=select_files()
-im = Image.open(m)
-    # this clears all exif data
-im.getexif().clear()
-im.save('some-image-without-exif.jpg')
+
 
